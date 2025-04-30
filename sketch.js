@@ -35,42 +35,44 @@ function setup() {
 
   handPose.detectStart(video, gotHands);
 
-  button = createButton("data");
-  button.mouseClicked(() => {
-    for (let c of ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Blank"]) {
-      loadStrings("inputs-"+c+".txt", (strings) => {
-        for (let s of strings) {
-          if (s === "") {
-            continue;
-          }
-          console.log(s);
-          let input = [];
-          for (let n of s.split(" ")[1].split(",")) {
-            input.push(parseFloat(n));
-          }
-          model.addData(input, {label: c});
-        }
-      })
-    }
-  });
+  // -------- Model Training and Saving -----------
 
-  b = createButton("Train");
-  b.mouseClicked(() => { 
-    console.log("Training");
-    model.normalizeData();
-    model.train({
-      epochs: 50,
-      batchSize: 100
-    }, () => {
-      console.log("Done");
-    });
-  });
+  // button = createButton("data");
+  // button.mouseClicked(() => {
+  //   for (let c of ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Blank"]) {
+  //     loadStrings("inputs-"+c+".txt", (strings) => {
+  //       for (let s of strings) {
+  //         if (s === "") {
+  //           continue;
+  //         }
+  //         console.log(s);
+  //         let input = [];
+  //         for (let n of s.split(" ")[1].split(",")) {
+  //           input.push(parseFloat(n));
+  //         }
+  //         model.addData(input, {label: c});
+  //       }
+  //     })
+  //   }
+  // });
 
-  b1 = createButton("Save");
-  b1.mouseClicked(() => { 
-    console.log("Saving");
-    model.save();
-  });
+  // b = createButton("Train");
+  // b.mouseClicked(() => { 
+  //   console.log("Training");
+  //   model.normalizeData();
+  //   model.train({
+  //     epochs: 50,
+  //     batchSize: 100
+  //   }, () => {
+  //     console.log("Done");
+  //   });
+  // });
+
+  // b1 = createButton("Save");
+  // b1.mouseClicked(() => { 
+  //   console.log("Saving");
+  //   model.save();
+  // });
 }
 
 function gotHands(results) {
