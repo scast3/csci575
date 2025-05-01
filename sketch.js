@@ -32,6 +32,13 @@ function setup() {
     debug: true
   }
   model = ml5.neuralNetwork(options);
+  model.load({
+    model: "model.json",
+    metadata: "model_meta.json",
+    weights: "model.weights.bin"
+  }, () => {
+    console.log("Loaded");
+  })
 
   handPose.detectStart(video, gotHands);
 
@@ -120,10 +127,14 @@ function draw() {
         } else {
           fill(255, 255, 0);
         }
+
+        let nnInput = [];
         
         for (let i = 0; i < hand.keypoints.length; i++) {
           let keypoint = hand.keypoints[i];
-          circle(keypoint.x, keypoint.y, 16);
+          nnInput.push(keypoint.x);
+          nnInput.push(keypoint.y);
+          circle(keypoint.x, keypoint.y, keypoint.z);
           boxCoords = {
             sx: min(boxCoords.sx, keypoint.x),
             sy: min(boxCoords.sy, keypoint.y),
@@ -131,6 +142,15 @@ function draw() {
             sHeight: max(boxCoords.sHeight, keypoint.y)
           }
         }
+
+        model.classify(nnInput, (results) => {
+          // make the label
+          if (results.length > 0) {
+            if (results[0].confidence > 0.1) {
+              label = results[0].label;
+            }
+          } 
+        })
 
         noFill();
         stroke(1);
@@ -147,11 +167,12 @@ function draw() {
         sHeight: 0
       }
     }
+  } else {
+    label = "";
   }
 
-  textSize(64);
+  textSize(256);
   textAlign(CENTER, CENTER);
-  fill(255);
-  text(label, width / 2, 3 / 4 * height);
-
+  fill(0);
+  text(label, width * 3 / 4, height / 2);
 }
